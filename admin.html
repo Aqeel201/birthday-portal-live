@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="style-portal.css">
     <style>
         .action-btns { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.8rem; }
-        .download-btn, .reset-btn-small {
+        .download-btn, .reset-btn-small, .url-btn {
             background: rgba(255,255,255,0.12);
             border: 1px solid rgba(255,255,255,0.25);
             color: white;
@@ -23,12 +23,60 @@
         }
         .download-btn:hover { background: rgba(106, 130, 251, 0.3); border-color: rgba(106, 130, 251, 0.5); }
         .reset-btn-small:hover { background: rgba(255, 100, 100, 0.3); border-color: rgba(255, 100, 100, 0.5); }
+        .url-btn:hover { background: rgba(6, 214, 160, 0.3); border-color: rgba(6, 214, 160, 0.5); }
         .upload-status { font-size: 0.75rem; margin-top: 0.5rem; min-height: 1.2rem; text-align: center; color: #ff6b9d; }
         .upload-status.success { color: #06d6a0; }
         .global-actions { display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; }
         .global-actions button { padding: 0.6rem 1.2rem; border-radius: 10px; border: none; cursor: pointer; font-family: 'Outfit', sans-serif; font-weight: 600; }
         .reset-all-btn { background: linear-gradient(135deg, #ff6b6b, #ee5a5a); color: white; }
         .info-text { font-size: 0.8rem; color: rgba(255,255,255,0.6); text-align: center; margin-top: 0.5rem; }
+
+        .supabase-banner {
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            margin: 1rem 0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        .supabase-banner.connected {
+            background: rgba(6, 214, 160, 0.15);
+            border: 1px solid rgba(6, 214, 160, 0.4);
+            color: #06d6a0;
+        }
+        .supabase-banner.not-connected {
+            background: rgba(255, 165, 0, 0.15);
+            border: 1px solid rgba(255, 165, 0, 0.4);
+            color: #ffaa00;
+        }
+        .supabase-banner a { color: #6a82fb; text-decoration: underline; }
+
+        .url-input-section {
+            margin-top: 0.8rem;
+            display: none;
+            gap: 0.5rem;
+            flex-direction: column;
+        }
+        .url-input-section.active { display: flex; }
+        .url-input-section input {
+            padding: 0.5rem 0.8rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 0.8rem;
+            font-family: 'Outfit', sans-serif;
+        }
+        .url-input-section input::placeholder { color: rgba(255,255,255,0.4); }
+        .url-input-section button {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(135deg, #6a82fb, #fc5c7d);
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -55,9 +103,11 @@
             <header class="portal-header">
                 <span class="portal-badge">Admin Panel ⚙️</span>
                 <h1>Upload Birthday Photos</h1>
-                <p>Website ke teeno sections ke liye yahan se images select karein. Uploaded photos auto-compress ho kar IndexedDB mein save ho jayengi.</p>
-                <p class="info-text">💡 Note: Photos sirf is browser mein save hongi. Dusre device pe dekhne ke liye, photos download karke GitHub repo ke <b>photos/</b> folder mein daalein.</p>
+                <p>Website ke teeno sections ke liye yahan se images select karein.</p>
             </header>
+
+            <!-- Supabase Connection Status -->
+            <div id="supabaseBanner" class="supabase-banner"></div>
 
             <div class="upload-grid">
                 <!-- Photo 1 -->
@@ -72,8 +122,13 @@
                         <input type="file" accept="image/*" onchange="handleImageUpload(1, this)">
                     </label>
                     <div class="action-btns">
+                        <button class="url-btn" onclick="toggleUrlInput(1)">🔗 URL Se Paste</button>
                         <button class="download-btn" onclick="downloadPhoto(1, 'photo-1.jpg')">⬇ Download</button>
                         <button class="reset-btn-small" onclick="resetPhoto(1)">🗑 Reset</button>
+                    </div>
+                    <div class="url-input-section" id="url-section-1">
+                        <input type="text" id="url-input-1" placeholder="Image URL paste karein (e.g. imgur, imgbb link)">
+                        <button onclick="saveFromUrl(1)">Save URL</button>
                     </div>
                 </div>
 
@@ -89,8 +144,13 @@
                         <input type="file" accept="image/*" onchange="handleImageUpload(2, this)">
                     </label>
                     <div class="action-btns">
+                        <button class="url-btn" onclick="toggleUrlInput(2)">🔗 URL Se Paste</button>
                         <button class="download-btn" onclick="downloadPhoto(2, 'photo-2.jpg')">⬇ Download</button>
                         <button class="reset-btn-small" onclick="resetPhoto(2)">🗑 Reset</button>
+                    </div>
+                    <div class="url-input-section" id="url-section-2">
+                        <input type="text" id="url-input-2" placeholder="Image URL paste karein (e.g. imgur, imgbb link)">
+                        <button onclick="saveFromUrl(2)">Save URL</button>
                     </div>
                 </div>
 
@@ -106,8 +166,13 @@
                         <input type="file" accept="image/*" onchange="handleImageUpload(3, this)">
                     </label>
                     <div class="action-btns">
+                        <button class="url-btn" onclick="toggleUrlInput(3)">🔗 URL Se Paste</button>
                         <button class="download-btn" onclick="downloadPhoto(3, 'photo-3.jpg')">⬇ Download</button>
                         <button class="reset-btn-small" onclick="resetPhoto(3)">🗑 Reset</button>
+                    </div>
+                    <div class="url-input-section" id="url-section-3">
+                        <input type="text" id="url-input-3" placeholder="Image URL paste karein (e.g. imgur, imgbb link)">
+                        <button onclick="saveFromUrl(3)">Save URL</button>
                     </div>
                 </div>
 
@@ -123,8 +188,13 @@
                         <input type="file" accept="image/*" onchange="handleImageUpload(4, this)">
                     </label>
                     <div class="action-btns">
+                        <button class="url-btn" onclick="toggleUrlInput(4)">🔗 URL Se Paste</button>
                         <button class="download-btn" onclick="downloadPhoto(4, 'photo-4.jpg')">⬇ Download</button>
                         <button class="reset-btn-small" onclick="resetPhoto(4)">🗑 Reset</button>
+                    </div>
+                    <div class="url-input-section" id="url-section-4">
+                        <input type="text" id="url-input-4" placeholder="Image URL paste karein (e.g. imgur, imgbb link)">
+                        <button onclick="saveFromUrl(4)">Save URL</button>
                     </div>
                 </div>
 
@@ -140,8 +210,13 @@
                         <input type="file" accept="image/*" onchange="handleImageUpload(5, this)">
                     </label>
                     <div class="action-btns">
+                        <button class="url-btn" onclick="toggleUrlInput(5)">🔗 URL Se Paste</button>
                         <button class="download-btn" onclick="downloadPhoto(5, 'photo-5.jpg')">⬇ Download</button>
                         <button class="reset-btn-small" onclick="resetPhoto(5)">🗑 Reset</button>
+                    </div>
+                    <div class="url-input-section" id="url-section-5">
+                        <input type="text" id="url-input-5" placeholder="Image URL paste karein (e.g. imgur, imgbb link)">
+                        <button onclick="saveFromUrl(5)">Save URL</button>
                     </div>
                 </div>
 
@@ -157,8 +232,13 @@
                         <input type="file" accept="image/*" onchange="handleImageUpload(6, this)">
                     </label>
                     <div class="action-btns">
+                        <button class="url-btn" onclick="toggleUrlInput(6)">🔗 URL Se Paste</button>
                         <button class="download-btn" onclick="downloadPhoto(6, 'photo-6.jpg')">⬇ Download</button>
                         <button class="reset-btn-small" onclick="resetPhoto(6)">🗑 Reset</button>
+                    </div>
+                    <div class="url-input-section" id="url-section-6">
+                        <input type="text" id="url-input-6" placeholder="Image URL paste karein (e.g. imgur, imgbb link)">
+                        <button onclick="saveFromUrl(6)">Save URL</button>
                     </div>
                 </div>
             </div>
@@ -196,6 +276,7 @@
         function showDashboard() {
             document.getElementById('lockScreen').style.display = 'none';
             document.getElementById('dashboardScreen').style.display = 'block';
+            showSupabaseBanner();
             loadPreviews();
         }
 
@@ -206,25 +287,80 @@
             document.getElementById('passcodeInput').value = '';
         }
 
-        // Load Previews - show ALL images including placeholders
+        function showSupabaseBanner() {
+            const banner = document.getElementById('supabaseBanner');
+            if (isSupabaseConfigured()) {
+                banner.className = 'supabase-banner connected';
+                banner.innerHTML = '✅ Supabase Connected! Photos har device pe sync hongi.';
+            } else {
+                banner.className = 'supabase-banner not-connected';
+                banner.innerHTML = '⚠️ Supabase Not Connected. Photos sirf is browser mein save hongi. <a href="https://supabase.com" target="_blank">Free Supabase account banayein</a> aur <code>config.js</code> mein credentials daalein.';
+            }
+        }
+
+        // Toggle URL input section
+        function toggleUrlInput(id) {
+            const section = document.getElementById(`url-section-${id}`);
+            section.classList.toggle('active');
+        }
+
+        // Save photo from URL (external image hosting like imgbb, imgur, etc.)
+        async function saveFromUrl(id) {
+            const input = document.getElementById(`url-input-${id}`);
+            const url = input.value.trim();
+            const preview = document.getElementById(`preview-${id}`);
+            const status = document.getElementById(`status-${id}`);
+            
+            if (!url) {
+                status.textContent = '❌ URL empty hai!';
+                status.className = 'upload-status';
+                return;
+            }
+            
+            // Basic URL validation
+            try {
+                new URL(url);
+            } catch (e) {
+                status.textContent = '❌ Invalid URL!';
+                status.className = 'upload-status';
+                return;
+            }
+            
+            status.textContent = 'Saving...';
+            status.className = 'upload-status';
+            
+            try {
+                await saveImageUrl(id, url);
+                preview.innerHTML = `<img src="${url}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">`;
+                status.textContent = isSupabaseConfigured() ? '✅ URL saved (Live sync!)' : '✅ URL saved (Local only)';
+                status.className = 'upload-status success';
+                input.value = '';
+                document.getElementById(`url-section-${id}`).classList.remove('active');
+            } catch (e) {
+                status.textContent = '❌ Save failed: ' + (e.message || 'Unknown error');
+                status.className = 'upload-status';
+            }
+        }
+
+        // Load Previews
         async function loadPreviews() {
             for (let i = 1; i <= 6; i++) {
                 try {
                     const url = await getImageUrl(i);
                     const preview = document.getElementById(`preview-${i}`);
+                    const status = document.getElementById(`status-${i}`);
                     if (url) {
                         preview.innerHTML = `<img src="${url}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">`;
                     } else {
                         preview.textContent = 'No Image';
                     }
-                    // Update status text
-                    const status = document.getElementById(`status-${i}`);
                     if (status) {
                         if (url && !url.includes(CONFIG.PLACEHOLDERS[i])) {
-                            status.textContent = '✅ Custom photo uploaded';
+                            const isLive = isSupabaseConfigured() && !url.startsWith('data:');
+                            status.textContent = isLive ? '✅ Live sync (Supabase)' : '✅ Custom photo saved';
                             status.className = 'upload-status success';
                         } else {
-                            status.textContent = '📂 Default photo (placeholder)';
+                            status.textContent = '📂 Default photo';
                             status.className = 'upload-status';
                         }
                     }
@@ -243,7 +379,7 @@
             const status = document.getElementById(`status-${id}`);
             preview.innerHTML = `<span class="loading-spinner">Compressing...</span>`;
             if (status) {
-                status.textContent = '';
+                status.textContent = isSupabaseConfigured() ? 'Uploading to cloud...' : 'Compressing...';
                 status.className = 'upload-status';
             }
 
@@ -252,7 +388,7 @@
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    const maxDim = 800; // Resize boundaries
+                    const maxDim = 800;
                     let w = img.width;
                     let h = img.height;
                     
@@ -273,21 +409,20 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, w, h);
 
-                    // Compress to JPEG with 0.7 quality factor
                     const compressedUrl = canvas.toDataURL('image/jpeg', 0.7);
 
-                    // Save to IndexedDB/Supabase with proper error handling
                     saveImageUrl(id, compressedUrl)
-                        .then(() => {
-                            preview.innerHTML = `<img src="${compressedUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">`;
+                        .then((savedUrl) => {
+                            const finalUrl = savedUrl || compressedUrl;
+                            preview.innerHTML = `<img src="${finalUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">`;
                             if (status) {
-                                status.textContent = '✅ Photo save ho gayi!';
+                                status.textContent = isSupabaseConfigured() ? '✅ Live sync (Supabase)!' : '✅ Saved locally';
                                 status.className = 'upload-status success';
                             }
                         })
                         .catch(err => {
                             console.error('Save failed:', err);
-                            preview.innerHTML = `<span style="color:#ff6b6b; font-size:0.8rem;">❌ Save failed</span>`;
+                            preview.innerHTML = `<span style="color:#ff6b6b; font-size:0.8rem;">❌ ${err.message || 'Save failed'}</span>`;
                             if (status) {
                                 status.textContent = err.message || '❌ Photo save nahi ho saki!';
                                 status.className = 'upload-status';
@@ -316,29 +451,13 @@
         // Reset a single photo
         async function resetPhoto(id) {
             try {
-                // Remove from IndexedDB
-                const db = await openDB();
-                const tx = db.transaction(STORE_NAME, 'readwrite');
-                const store = tx.objectStore(STORE_NAME);
-                await new Promise((resolve, reject) => {
-                    const request = store.delete(id);
-                    request.onsuccess = () => resolve();
-                    request.onerror = () => reject(request.error);
-                });
-                db.close();
-                
-                // Remove from localStorage too
-                try {
-                    localStorage.removeItem(`birthday_photo_${id}`);
-                } catch (e) {}
-                
-                // Reload preview
+                await deletePhoto(id);
                 const preview = document.getElementById(`preview-${id}`);
                 const status = document.getElementById(`status-${id}`);
                 const url = CONFIG.PLACEHOLDERS[id];
                 preview.innerHTML = `<img src="${url}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">`;
                 if (status) {
-                    status.textContent = '📂 Default photo (placeholder)';
+                    status.textContent = '📂 Default photo';
                     status.className = 'upload-status';
                 }
             } catch (e) {
@@ -349,9 +468,7 @@
 
         // Reset all photos
         async function resetAllPhotosAndReload() {
-            if (!confirm('Kya aap sab uploaded photos delete karna chahte hain? Yeh action undo nahi ho sakta.')) {
-                return;
-            }
+            if (!confirm('Kya aap sab uploaded photos delete karna chahte hain?')) return;
             try {
                 await clearAllPhotos();
                 loadPreviews();
