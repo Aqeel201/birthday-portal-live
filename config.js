@@ -10,8 +10,8 @@
 
 const CONFIG = {
     // 1. SUPABASE CREDENTIALS (Fill these to enable live backend)
-    SUPABASE_URL: "", 
-    SUPABASE_ANON_KEY: "",
+    SUPABASE_URL: "https://uyojwbcvywrugnbhzovx.supabase.co", 
+    SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5b2p3YmN2eXdydWduYmh6b3Z4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MjcyNjMsImV4cCI6MjA5ODQwMzI2M30.Bwv4ES4GmKBSFVth-9wKnzO_HH2rNVgEERd8wXVBtX8",
     SUPABASE_BUCKET: "birthday-photos", // Same as bucket name you create
     
     // 2. Secret Admin Password for uploading photos
