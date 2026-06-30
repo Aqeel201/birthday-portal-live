@@ -2,224 +2,211 @@
     if (window.__birthdayMusicPlayer) return;
     window.__birthdayMusicPlayer = true;
 
-    const STORE_KEY = "birthday_music_track";
-    const tracks = {
-        love: "Love",
-        birthday: "Baneen Jan"
-    };
-
     let audioCtx = null;
     let masterGain = null;
-    let isPlaying = false;
-    let activeTrack = localStorage.getItem(STORE_KEY) || "love";
     let loopTimer = null;
+    let enabled = true;
+    let started = false;
+    let activeNodes = [];
 
     function createUi() {
         const style = document.createElement("style");
         style.textContent = `
-            .birthday-music-player {
+            .birthday-music-toggle {
                 position: fixed;
                 left: 1rem;
                 bottom: 1rem;
-                z-index: 250;
-                display: flex;
+                z-index: 300;
+                width: 46px;
+                height: 46px;
+                border: 1px solid rgba(255,255,255,0.28);
+                border-radius: 50%;
+                display: inline-flex;
                 align-items: center;
-                gap: 0.45rem;
-                padding: 0.45rem;
-                border: 1px solid rgba(255,255,255,0.22);
-                border-radius: 999px;
-                background: rgba(12, 10, 28, 0.72);
+                justify-content: center;
                 color: #fff;
-                box-shadow: 0 12px 32px rgba(0,0,0,0.28);
+                background: rgba(14, 10, 30, 0.74);
+                box-shadow: 0 12px 30px rgba(0,0,0,0.32);
                 backdrop-filter: blur(14px);
                 -webkit-backdrop-filter: blur(14px);
-                font-family: Outfit, system-ui, sans-serif;
-            }
-            .birthday-music-player button {
-                border: 0;
-                border-radius: 999px;
-                min-height: 34px;
-                padding: 0.5rem 0.75rem;
-                color: inherit;
-                background: rgba(255,255,255,0.1);
-                font: inherit;
-                font-size: 0.76rem;
-                font-weight: 700;
+                font-size: 1.05rem;
+                line-height: 1;
                 cursor: pointer;
-                transition: transform 0.18s ease, background 0.18s ease;
-                white-space: nowrap;
+                transition: transform 0.18s ease, background 0.18s ease, opacity 0.18s ease;
             }
-            .birthday-music-player button:hover {
-                transform: translateY(-1px);
-                background: rgba(255,255,255,0.18);
+
+            .birthday-music-toggle:hover {
+                transform: translateY(-1px) scale(1.04);
+                background: rgba(255, 71, 126, 0.86);
             }
-            .birthday-music-player .music-main.is-playing {
-                background: linear-gradient(135deg, #ff477e, #ffb703);
-                color: #19091a;
+
+            .birthday-music-toggle.is-off {
+                opacity: 0.62;
+                background: rgba(14, 10, 30, 0.58);
             }
-            .birthday-music-player .music-track.is-active {
-                background: rgba(255,255,255,0.92);
-                color: #2b1138;
-            }
+
             @media (max-width: 520px) {
-                .birthday-music-player {
-                    right: 0.75rem;
-                    left: 0.75rem;
-                    bottom: 0.75rem;
-                    justify-content: center;
-                    gap: 0.35rem;
-                    border-radius: 18px;
-                }
-                .birthday-music-player button {
-                    min-height: 32px;
-                    padding: 0.45rem 0.58rem;
-                    font-size: 0.7rem;
+                .birthday-music-toggle {
+                    left: 0.85rem;
+                    bottom: 0.85rem;
+                    width: 42px;
+                    height: 42px;
+                    font-size: 0.98rem;
                 }
             }
         `;
         document.head.appendChild(style);
 
-        const player = document.createElement("div");
-        player.className = "birthday-music-player";
-        player.innerHTML = `
-            <button class="music-main" type="button" title="Play soft background music">Music Off</button>
-            <button class="music-track" type="button" data-track="love" title="Soft romantic background loop">Love</button>
-            <button class="music-track" type="button" data-track="birthday" title="Happy Birthday Baneen Jan tune">Birthday</button>
-        `;
-        document.body.appendChild(player);
+        const button = document.createElement("button");
+        button.className = "birthday-music-toggle";
+        button.type = "button";
+        button.setAttribute("aria-label", "Turn background music off");
+        button.title = "Music on";
+        document.body.appendChild(button);
 
-        player.querySelector(".music-main").addEventListener("click", togglePlayback);
-        player.querySelectorAll(".music-track").forEach((button) => {
-            button.addEventListener("click", () => {
-                activeTrack = button.dataset.track;
-                localStorage.setItem(STORE_KEY, activeTrack);
-                updateUi();
-                if (isPlaying) startLoop();
-            });
+        button.addEventListener("click", () => {
+            enabled = !enabled;
+            if (enabled) {
+                startMusic();
+            } else {
+                stopMusic();
+            }
+            updateUi();
         });
+
         updateUi();
+        startMusic();
+        armUserGestureStart();
     }
 
     function ensureAudio() {
         if (!audioCtx) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             masterGain = audioCtx.createGain();
-            masterGain.gain.value = 0.22;
+            masterGain.gain.value = 0;
             masterGain.connect(audioCtx.destination);
         }
-        if (audioCtx.state === "suspended") audioCtx.resume();
+
+        if (audioCtx.state === "suspended") {
+            audioCtx.resume().catch(() => {});
+        }
+    }
+
+    function armUserGestureStart() {
+        const resume = (event) => {
+            if (event.target && event.target.closest && event.target.closest(".birthday-music-toggle")) return;
+            if (!enabled) return;
+            startMusic();
+        };
+
+        window.addEventListener("pointerdown", resume, { passive: true });
+        window.addEventListener("keydown", resume, { passive: true });
+        window.addEventListener("touchstart", resume, { passive: true });
     }
 
     function playTone(freq, start, duration, options = {}) {
+        if (!enabled || !masterGain) return;
+
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
+        const level = options.level || 0.05;
+
         osc.type = options.type || "sine";
         osc.frequency.setValueAtTime(freq, start);
-        if (options.slideTo) {
-            osc.frequency.exponentialRampToValueAtTime(options.slideTo, start + duration * 0.85);
-        }
-        const level = options.level || 0.09;
         gain.gain.setValueAtTime(0.0001, start);
-        gain.gain.exponentialRampToValueAtTime(level, start + 0.04);
+        gain.gain.exponentialRampToValueAtTime(level, start + 0.05);
         gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+
         osc.connect(gain);
         gain.connect(masterGain);
         osc.start(start);
         osc.stop(start + duration + 0.08);
+
+        activeNodes.push({ osc, gain });
+        osc.addEventListener("ended", () => {
+            activeNodes = activeNodes.filter((node) => node.osc !== osc);
+            try { gain.disconnect(); } catch (error) {}
+        });
     }
 
-    function playChord(freqs, start, duration, level) {
+    function playChord(freqs, start, duration) {
         freqs.forEach((freq) => playTone(freq, start, duration, {
             type: "triangle",
-            level: level || 0.028
+            level: 0.016
         }));
     }
 
-    function playLoveLoop() {
+    function playBaneenLoop() {
+        if (!enabled || !audioCtx) return;
+
         const start = audioCtx.currentTime + 0.08;
-        const notes = [
-            [0.0, 329.63, 0.9], [0.9, 392.00, 0.8], [1.8, 440.00, 1.0], [3.0, 392.00, 1.1],
-            [4.2, 349.23, 0.9], [5.1, 392.00, 0.8], [6.0, 329.63, 1.2], [7.6, 293.66, 1.0],
-            [8.8, 329.63, 0.8], [9.7, 392.00, 0.8], [10.6, 440.00, 1.2], [12.0, 493.88, 1.2]
+        const phrase = [
+            [0.0, 392.00, 0.45], [0.5, 392.00, 0.28], [0.9, 440.00, 0.62], [1.65, 392.00, 0.62],
+            [2.4, 523.25, 0.62], [3.15, 493.88, 0.9],
+            [4.4, 392.00, 0.45], [4.9, 392.00, 0.28], [5.3, 440.00, 0.62], [6.05, 392.00, 0.62],
+            [6.8, 587.33, 0.62], [7.55, 523.25, 0.95],
+            [8.9, 329.63, 0.7], [9.75, 392.00, 0.7], [10.6, 440.00, 0.85], [11.65, 392.00, 0.95],
+            [12.9, 349.23, 0.8], [13.85, 329.63, 0.8], [14.8, 293.66, 1.0], [16.0, 261.63, 1.25]
         ];
         const chords = [
             [0, [261.63, 329.63, 392.00]],
-            [4, [220.00, 261.63, 329.63]],
-            [8, [246.94, 293.66, 392.00]],
-            [12, [261.63, 329.63, 392.00]]
+            [4.2, [220.00, 261.63, 329.63]],
+            [8.4, [246.94, 293.66, 392.00]],
+            [12.6, [261.63, 329.63, 392.00]]
         ];
 
-        chords.forEach(([offset, freqs]) => playChord(freqs, start + offset, 3.8, 0.018));
-        notes.forEach(([offset, freq, duration]) => {
-            playTone(freq, start + offset, duration, { type: "sine", level: 0.055 });
-            playTone(freq * 2, start + offset + 0.02, duration * 0.7, { type: "triangle", level: 0.012 });
+        chords.forEach(([offset, freqs]) => playChord(freqs, start + offset, 3.8));
+        phrase.forEach(([offset, freq, duration]) => {
+            playTone(freq, start + offset, duration, { type: "sine", level: 0.046 });
+            playTone(freq * 2, start + offset + 0.03, duration * 0.62, { type: "triangle", level: 0.01 });
         });
     }
 
-    function playBirthdayTune() {
-        const start = audioCtx.currentTime + 0.08;
-        const G = 392.00, A = 440.00, B = 493.88, C = 523.25, D = 587.33, E = 659.25, F = 698.46, G2 = 783.99;
-        const beat = 0.42;
-        const notes = [
-            [0, G, 0.55], [0.55, G, 0.35], [1, A, 0.8], [1.9, G, 0.8], [2.8, C, 0.8], [3.7, B, 1.1],
-            [5.0, G, 0.55], [5.55, G, 0.35], [6.0, A, 0.8], [6.9, G, 0.8], [7.8, D, 0.8], [8.7, C, 1.1],
-            [10.0, G, 0.55], [10.55, G, 0.35], [11.0, G2, 0.8], [11.9, E, 0.8], [12.8, C, 0.8], [13.7, B, 0.8], [14.6, A, 1.1],
-            [16.0, F, 0.55], [16.55, F, 0.35], [17.0, E, 0.8], [17.9, C, 0.8], [18.8, D, 0.8], [19.7, C, 1.4]
-        ];
-        const chords = [
-            [0, [261.63, 329.63, 392.00]],
-            [5, [261.63, 329.63, 392.00]],
-            [10, [349.23, 440.00, 523.25]],
-            [16, [261.63, 329.63, 392.00]]
-        ];
+    function startMusic() {
+        if (!enabled) return;
 
-        chords.forEach(([offset, freqs]) => playChord(freqs, start + offset, 4.3, 0.016));
-        notes.forEach(([offset, freq, duration]) => {
-            playTone(freq, start + offset * beat, duration * beat, { type: "triangle", level: 0.06 });
-        });
-    }
-
-    function startLoop() {
-        stopLoop(false);
         ensureAudio();
-        isPlaying = true;
-        if (activeTrack === "birthday") {
-            playBirthdayTune();
-            loopTimer = window.setInterval(playBirthdayTune, 9500);
-        } else {
-            playLoveLoop();
-            loopTimer = window.setInterval(playLoveLoop, 12800);
+        started = true;
+        masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+        masterGain.gain.setValueAtTime(masterGain.gain.value, audioCtx.currentTime);
+        masterGain.gain.linearRampToValueAtTime(0.18, audioCtx.currentTime + 0.18);
+
+        if (!loopTimer) {
+            playBaneenLoop();
+            loopTimer = window.setInterval(playBaneenLoop, 17600);
         }
         updateUi();
     }
 
-    function stopLoop(update = true) {
+    function stopMusic() {
         if (loopTimer) {
             window.clearInterval(loopTimer);
             loopTimer = null;
         }
-        isPlaying = false;
-        if (update) updateUi();
-    }
 
-    function togglePlayback() {
-        if (isPlaying) {
-            stopLoop();
-        } else {
-            startLoop();
+        if (audioCtx && masterGain) {
+            masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+            masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
         }
+
+        activeNodes.forEach(({ osc, gain }) => {
+            try { gain.gain.cancelScheduledValues(audioCtx.currentTime); } catch (error) {}
+            try { gain.gain.setValueAtTime(0, audioCtx.currentTime); } catch (error) {}
+            try { osc.stop(); } catch (error) {}
+        });
+        activeNodes = [];
+        started = false;
+        updateUi();
     }
 
     function updateUi() {
-        const main = document.querySelector(".birthday-music-player .music-main");
-        if (!main) return;
-        main.textContent = isPlaying ? "Music On" : "Music Off";
-        main.classList.toggle("is-playing", isPlaying);
-        document.querySelectorAll(".birthday-music-player .music-track").forEach((button) => {
-            const isActive = button.dataset.track === activeTrack;
-            button.classList.toggle("is-active", isActive);
-            button.textContent = tracks[button.dataset.track] || button.dataset.track;
-        });
+        const button = document.querySelector(".birthday-music-toggle");
+        if (!button) return;
+
+        button.textContent = enabled ? "🔊" : "🔇";
+        button.classList.toggle("is-off", !enabled);
+        button.setAttribute("aria-label", enabled ? "Turn background music off" : "Turn background music on");
+        button.title = enabled ? "Music on" : "Music off";
     }
 
     document.addEventListener("DOMContentLoaded", createUi);
