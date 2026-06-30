@@ -8,6 +8,28 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style-portal.css">
+    <style>
+        .action-btns { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.8rem; }
+        .download-btn, .reset-btn-small {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.25);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Outfit', sans-serif;
+        }
+        .download-btn:hover { background: rgba(106, 130, 251, 0.3); border-color: rgba(106, 130, 251, 0.5); }
+        .reset-btn-small:hover { background: rgba(255, 100, 100, 0.3); border-color: rgba(255, 100, 100, 0.5); }
+        .upload-status { font-size: 0.75rem; margin-top: 0.5rem; min-height: 1.2rem; text-align: center; color: #ff6b9d; }
+        .upload-status.success { color: #06d6a0; }
+        .global-actions { display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; }
+        .global-actions button { padding: 0.6rem 1.2rem; border-radius: 10px; border: none; cursor: pointer; font-family: 'Outfit', sans-serif; font-weight: 600; }
+        .reset-all-btn { background: linear-gradient(135deg, #ff6b6b, #ee5a5a); color: white; }
+        .info-text { font-size: 0.8rem; color: rgba(255,255,255,0.6); text-align: center; margin-top: 0.5rem; }
+    </style>
 </head>
 <body>
     <div class="space-bg"></div>
@@ -33,7 +55,8 @@
             <header class="portal-header">
                 <span class="portal-badge">Admin Panel ⚙️</span>
                 <h1>Upload Birthday Photos</h1>
-                <p>Website ke teeno sections ke liye yahan se images select karein. Uploaded photos auto-compress ho kar database/local mein save ho jayengi.</p>
+                <p>Website ke teeno sections ke liye yahan se images select karein. Uploaded photos auto-compress ho kar IndexedDB mein save ho jayengi.</p>
+                <p class="info-text">💡 Note: Photos sirf is browser mein save hongi. Dusre device pe dekhne ke liye, photos download karke GitHub repo ke <b>photos/</b> folder mein daalein.</p>
             </header>
 
             <div class="upload-grid">
@@ -43,10 +66,15 @@
                     <h3>Photo 1: Jab Hum Mile</h3>
                     <p>Timeline ki pehli photo</p>
                     <div class="preview-box" id="preview-1">No Image</div>
+                    <p class="upload-status" id="status-1"></p>
                     <label class="file-label">
                         Choose Photo
                         <input type="file" accept="image/*" onchange="handleImageUpload(1, this)">
                     </label>
+                    <div class="action-btns">
+                        <button class="download-btn" onclick="downloadPhoto(1, 'photo-1.jpg')">⬇ Download</button>
+                        <button class="reset-btn-small" onclick="resetPhoto(1)">🗑 Reset</button>
+                    </div>
                 </div>
 
                 <!-- Photo 2 -->
@@ -55,10 +83,15 @@
                     <h3>Photo 2: Pehli Baat</h3>
                     <p>Timeline ki dusri photo ya chat screenshot</p>
                     <div class="preview-box" id="preview-2">No Image</div>
+                    <p class="upload-status" id="status-2"></p>
                     <label class="file-label">
                         Choose Photo
                         <input type="file" accept="image/*" onchange="handleImageUpload(2, this)">
                     </label>
+                    <div class="action-btns">
+                        <button class="download-btn" onclick="downloadPhoto(2, 'photo-2.jpg')">⬇ Download</button>
+                        <button class="reset-btn-small" onclick="resetPhoto(2)">🗑 Reset</button>
+                    </div>
                 </div>
 
                 <!-- Photo 3 -->
@@ -67,10 +100,15 @@
                     <h3>Photo 3: Special Moment</h3>
                     <p>Timeline aur Scratch card 2 ki photo</p>
                     <div class="preview-box" id="preview-3">No Image</div>
+                    <p class="upload-status" id="status-3"></p>
                     <label class="file-label">
                         Choose Photo
                         <input type="file" accept="image/*" onchange="handleImageUpload(3, this)">
                     </label>
+                    <div class="action-btns">
+                        <button class="download-btn" onclick="downloadPhoto(3, 'photo-3.jpg')">⬇ Download</button>
+                        <button class="reset-btn-small" onclick="resetPhoto(3)">🗑 Reset</button>
+                    </div>
                 </div>
 
                 <!-- Photo 4 -->
@@ -79,10 +117,15 @@
                     <h3>Photo 4: Yaadgar Din</h3>
                     <p>Timeline ki chothi photo</p>
                     <div class="preview-box" id="preview-4">No Image</div>
+                    <p class="upload-status" id="status-4"></p>
                     <label class="file-label">
                         Choose Photo
                         <input type="file" accept="image/*" onchange="handleImageUpload(4, this)">
                     </label>
+                    <div class="action-btns">
+                        <button class="download-btn" onclick="downloadPhoto(4, 'photo-4.jpg')">⬇ Download</button>
+                        <button class="reset-btn-small" onclick="resetPhoto(4)">🗑 Reset</button>
+                    </div>
                 </div>
 
                 <!-- Photo 5 -->
@@ -91,10 +134,15 @@
                     <h3>Photo 5: Funny Moment</h3>
                     <p>Timeline ki panchwin photo</p>
                     <div class="preview-box" id="preview-5">No Image</div>
+                    <p class="upload-status" id="status-5"></p>
                     <label class="file-label">
                         Choose Photo
                         <input type="file" accept="image/*" onchange="handleImageUpload(5, this)">
                     </label>
+                    <div class="action-btns">
+                        <button class="download-btn" onclick="downloadPhoto(5, 'photo-5.jpg')">⬇ Download</button>
+                        <button class="reset-btn-small" onclick="resetPhoto(5)">🗑 Reset</button>
+                    </div>
                 </div>
 
                 <!-- Photo 6 -->
@@ -103,11 +151,20 @@
                     <h3>Photo 6: Latest / Wish Photo</h3>
                     <p>Timeline ki aakhri/main photo</p>
                     <div class="preview-box" id="preview-6">No Image</div>
+                    <p class="upload-status" id="status-6"></p>
                     <label class="file-label">
                         Choose Photo
                         <input type="file" accept="image/*" onchange="handleImageUpload(6, this)">
                     </label>
+                    <div class="action-btns">
+                        <button class="download-btn" onclick="downloadPhoto(6, 'photo-6.jpg')">⬇ Download</button>
+                        <button class="reset-btn-small" onclick="resetPhoto(6)">🗑 Reset</button>
+                    </div>
                 </div>
+            </div>
+            
+            <div class="global-actions">
+                <button class="reset-all-btn" onclick="resetAllPhotosAndReload()">🗑 Sab Photos Reset Karein</button>
             </div>
             
             <div class="dashboard-footer">
@@ -149,13 +206,30 @@
             document.getElementById('passcodeInput').value = '';
         }
 
-        // Load Previews
+        // Load Previews - show ALL images including placeholders
         async function loadPreviews() {
             for (let i = 1; i <= 6; i++) {
-                const url = await getImageUrl(i);
-                if (url && !url.startsWith('https://images.unsplash.com')) {
+                try {
+                    const url = await getImageUrl(i);
                     const preview = document.getElementById(`preview-${i}`);
-                    preview.innerHTML = `<img src="${url}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">`;
+                    if (url) {
+                        preview.innerHTML = `<img src="${url}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">`;
+                    } else {
+                        preview.textContent = 'No Image';
+                    }
+                    // Update status text
+                    const status = document.getElementById(`status-${i}`);
+                    if (status) {
+                        if (url && !url.includes(CONFIG.PLACEHOLDERS[i])) {
+                            status.textContent = '✅ Custom photo uploaded';
+                            status.className = 'upload-status success';
+                        } else {
+                            status.textContent = '📂 Default photo (placeholder)';
+                            status.className = 'upload-status';
+                        }
+                    }
+                } catch (e) {
+                    console.error(`Error loading preview ${i}:`, e);
                 }
             }
         }
@@ -166,7 +240,12 @@
             if (!file) return;
 
             const preview = document.getElementById(`preview-${id}`);
+            const status = document.getElementById(`status-${id}`);
             preview.innerHTML = `<span class="loading-spinner">Compressing...</span>`;
+            if (status) {
+                status.textContent = '';
+                status.className = 'upload-status';
+            }
 
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -197,14 +276,90 @@
                     // Compress to JPEG with 0.7 quality factor
                     const compressedUrl = canvas.toDataURL('image/jpeg', 0.7);
 
-                    // Save to Supabase/localStorage
-                    saveImageUrl(id, compressedUrl).then(() => {
-                        preview.innerHTML = `<img src="${compressedUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">`;
-                    });
+                    // Save to IndexedDB/Supabase with proper error handling
+                    saveImageUrl(id, compressedUrl)
+                        .then(() => {
+                            preview.innerHTML = `<img src="${compressedUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">`;
+                            if (status) {
+                                status.textContent = '✅ Photo save ho gayi!';
+                                status.className = 'upload-status success';
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Save failed:', err);
+                            preview.innerHTML = `<span style="color:#ff6b6b; font-size:0.8rem;">❌ Save failed</span>`;
+                            if (status) {
+                                status.textContent = err.message || '❌ Photo save nahi ho saki!';
+                                status.className = 'upload-status';
+                            }
+                        });
+                };
+                img.onerror = function() {
+                    preview.innerHTML = `<span style="color:#ff6b6b; font-size:0.8rem;">❌ Invalid image</span>`;
+                    if (status) {
+                        status.textContent = '❌ Image read nahi ho saki!';
+                        status.className = 'upload-status';
+                    }
                 };
                 img.src = e.target.result;
             };
+            reader.onerror = function() {
+                preview.innerHTML = `<span style="color:#ff6b6b; font-size:0.8rem;">❌ File read error</span>`;
+                if (status) {
+                    status.textContent = '❌ File read nahi ho saki!';
+                    status.className = 'upload-status';
+                }
+            };
             reader.readAsDataURL(file);
+        }
+
+        // Reset a single photo
+        async function resetPhoto(id) {
+            try {
+                // Remove from IndexedDB
+                const db = await openDB();
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                const store = tx.objectStore(STORE_NAME);
+                await new Promise((resolve, reject) => {
+                    const request = store.delete(id);
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject(request.error);
+                });
+                db.close();
+                
+                // Remove from localStorage too
+                try {
+                    localStorage.removeItem(`birthday_photo_${id}`);
+                } catch (e) {}
+                
+                // Reload preview
+                const preview = document.getElementById(`preview-${id}`);
+                const status = document.getElementById(`status-${id}`);
+                const url = CONFIG.PLACEHOLDERS[id];
+                preview.innerHTML = `<img src="${url}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">`;
+                if (status) {
+                    status.textContent = '📂 Default photo (placeholder)';
+                    status.className = 'upload-status';
+                }
+            } catch (e) {
+                console.error('Reset failed:', e);
+                alert('Reset failed: ' + e.message);
+            }
+        }
+
+        // Reset all photos
+        async function resetAllPhotosAndReload() {
+            if (!confirm('Kya aap sab uploaded photos delete karna chahte hain? Yeh action undo nahi ho sakta.')) {
+                return;
+            }
+            try {
+                await clearAllPhotos();
+                loadPreviews();
+                alert('Sab photos reset ho gayi hain! ✅');
+            } catch (e) {
+                console.error('Reset all failed:', e);
+                alert('Reset failed: ' + e.message);
+            }
         }
 
         // Quick buzzer sound for error

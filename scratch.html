@@ -44,7 +44,7 @@
                     <!-- Underneath Content -->
                     <div class="scratch-content image-content">
                         <!-- REPLACE: Add your photo here -->
-                        <img class="reveal-img" src="photos/1.jpg" alt="Aapki Photo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <img class="reveal-img" src="photos/1.jpg" alt="Aapki Photo" data-id="1">
                         <div class="img-placeholder" style="display:none">📸 photos folder mein 1.jpg daalo</div>
                         <div class="caption">Aapka sabsay pyara face! 😍</div>
                     </div>
@@ -97,9 +97,36 @@
     <script src="config.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            const img = document.querySelector('.reveal-img');
+            const img = document.querySelector('.reveal-img[data-id="1"]');
             if (img && typeof getImageUrl === 'function') {
-                img.src = await getImageUrl(1);
+                try {
+                    const url = await getImageUrl(1);
+                    if (url && !url.includes(CONFIG.PLACEHOLDERS[1])) {
+                        img.src = url;
+                        img.style.display = 'block';
+                        const placeholder = img.nextElementSibling;
+                        if (placeholder && placeholder.classList.contains('img-placeholder')) {
+                            placeholder.style.display = 'none';
+                        }
+                    } else {
+                        img.onerror = function() {
+                            img.style.display = 'none';
+                            const placeholder = img.nextElementSibling;
+                            if (placeholder && placeholder.classList.contains('img-placeholder')) {
+                                placeholder.style.display = 'flex';
+                            }
+                        };
+                        img.onload = function() {
+                            img.style.display = 'block';
+                            const placeholder = img.nextElementSibling;
+                            if (placeholder && placeholder.classList.contains('img-placeholder')) {
+                                placeholder.style.display = 'none';
+                            }
+                        };
+                    }
+                } catch (e) {
+                    console.error('Error loading scratch image:', e);
+                }
             }
         });
     </script>
