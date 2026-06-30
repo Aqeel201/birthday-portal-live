@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surprises For You 💖</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style-portal.css">
+</head>
+<body>
+    <!-- Background Starry Particles -->
+    <div class="space-bg"></div>
+
+    <!-- Secret Admin Portal Button -->
+    <a href="admin.html" class="secret-admin-btn" title="Admin Settings">⚙️</a>
+
+    <div class="portal-container">
+        <header class="portal-header">
+            <span class="portal-badge">Special Gift Collection 🎁</span>
+            <h1 class="portal-title">Baneen's Birthday Portal</h1>
+            <p class="portal-tagline">Har lamha aapke liye, pyaar ke saath...</p>
+        </header>
+
+        <!-- Countdown Section -->
+        <div class="glass-card countdown-card">
+            <p class="countdown-label">Aapke Birthday Tak Ka Safar:</p>
+            <div class="countdown" id="countdown">
+                <div class="countdown-item">
+                    <span class="countdown-number" id="days">00</span>
+                    <span class="countdown-text">Days</span>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="hours">00</span>
+                    <span class="countdown-text">Hours</span>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="minutes">00</span>
+                    <span class="countdown-text">Minutes</span>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="seconds">00</span>
+                    <span class="countdown-text">Seconds</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3 Surprise Buttons Grid -->
+        <div class="portal-grid">
+            <!-- Surprise 1 -->
+            <a href="timeline.html" class="portal-card-link">
+                <div class="portal-card card-1">
+                    <div class="card-icon">📖</div>
+                    <h2>Hamari Kahani</h2>
+                    <p>Timeline of our special memories and moments together.</p>
+                    <span class="card-action-btn">Open Story ✨</span>
+                </div>
+            </a>
+
+            <!-- Surprise 2 -->
+            <a href="game.html" class="portal-card-link">
+                <div class="portal-card card-2">
+                    <div class="card-icon">🎈</div>
+                    <h2>Verification Game</h2>
+                    <p>Answer cute questions and pop balloons to unlock wishes.</p>
+                    <span class="card-action-btn">Play Game 🎮</span>
+                </div>
+            </a>
+
+            <!-- Surprise 3 -->
+            <a href="scratch.html" class="portal-card-link">
+                <div class="portal-card card-3">
+                    <div class="card-icon">🤫</div>
+                    <h2>Mystery Scratch</h2>
+                    <p>Scratch gold tickets to reveal promises and pictures.</p>
+                    <span class="card-action-btn">Scratch Cards 🪙</span>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        // Countdown Timer
+        function updateCountdown() {
+            const birthday = new Date('2026-07-25T00:00:00');
+            const now = new Date();
+            const diff = birthday - now;
+
+            if (diff <= 0) {
+                document.getElementById('countdown').innerHTML = `
+                    <div class="countdown-item" style="min-width: auto; padding: 1.2rem 3rem;">
+                        <span class="countdown-number" style="font-size: 2rem;">🎂 Happy Birthday Baneen! 🎂</span>
+                    </div>
+                `;
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>

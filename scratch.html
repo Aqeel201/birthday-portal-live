@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scratch Your Surprises! 🎁</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Outfit:wght@300;400;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style-scratch.css">
+</head>
+<body>
+    <a href="index.html" class="portal-home-link">Home</a>
+
+    <!-- Sparkle background -->
+    <div class="stars-bg"></div>
+
+    <div class="container">
+        <header class="header">
+            <span class="badge">Level 3: Mystery Cards 🤫</span>
+            <h1>Scratch & Reveal Your Surprises! ✨</h1>
+            <p>Apne mouse ya finger se in cards ko scratch (khurachein) aur unke peeche chupe messages ko dekhein!</p>
+        </header>
+
+        <div class="scratch-grid">
+            <!-- Card 1 -->
+            <div class="scratch-card-wrapper" id="card1">
+                <div class="scratch-card-inner">
+                    <!-- Underneath Content -->
+                    <div class="scratch-content message-content">
+                        <div class="card-emoji">🤝</div>
+                        <h3>Mera Pehla Wada 🌸</h3>
+                        <p class="urdu-text">آپ کے ساتھ ہمیشہ محبت اور عزت کا رشتہ رہے گا ♾️</p>
+                        <p>Main wada karta hoon ke har haal mein aapka saath nibhaunga aur aapki smile ki hamesha hifazat karunga.</p>
+                    </div>
+                    <!-- Canvas Cover -->
+                    <canvas class="scratch-canvas" data-label="Scratch For Promise 🤝"></canvas>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="scratch-card-wrapper" id="card2">
+                <div class="scratch-card-inner">
+                    <!-- Underneath Content -->
+                    <div class="scratch-content image-content">
+                        <!-- REPLACE: Add your photo here -->
+                        <img class="reveal-img" src="photos/1.jpg" alt="Aapki Photo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="img-placeholder" style="display:none">📸 photos folder mein 1.jpg daalo</div>
+                        <div class="caption">Aapka sabsay pyara face! 😍</div>
+                    </div>
+                    <canvas class="scratch-canvas" data-label="Scratch For Photo 📸"></canvas>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="scratch-card-wrapper" id="card3">
+                <div class="scratch-card-inner">
+                    <!-- Underneath Content -->
+                    <div class="scratch-content message-content">
+                        <div class="card-emoji">🏠</div>
+                        <h3>Mera Asli Ghar 💖</h3>
+                        <p class="urdu-text">جہاں آپ ہیں، وہی میرا سکون ہے 🌻</p>
+                        <p>Mera sukoon aur mera ghar kisi building mein nahi hai... balki wahan hai jahan aap muskurati hain.</p>
+                    </div>
+                    <canvas class="scratch-canvas" data-label="Scratch For Home 🏠"></canvas>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="scratch-card-wrapper" id="card4">
+                <div class="scratch-card-inner">
+                    <!-- Underneath Content -->
+                    <div class="scratch-content message-content main-wish-content">
+                        <div class="card-emoji">🎂</div>
+                        <h3 class="main-title">Happy Birthday! 🎉</h3>
+                        <p class="main-para">Meri jaan, aapko janam din bohot bohot mubarak ho! Main khush-naseeb hoon ke aap meri zindagi mein hain.</p>
+                        <p class="urdu-text">ہمیشہ خوش رہیں اور مسکراتی رہیں ❤️</p>
+                        <p class="signature">— Sirf aapka, Aqeel</p>
+                    </div>
+                    <canvas class="scratch-canvas" data-label="The Main Wish 🎁"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="footer">
+            <button class="reset-btn" onclick="resetAllCards()">Saare Cards Reset Karein 🔄</button>
+        </footer>
+    </div>
+
+    <!-- Audio Switch -->
+    <div class="sound-control">
+        <button class="sound-btn" id="soundToggleBtn" onclick="toggleSound()">
+            🔊 Sound: On
+        </button>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const img = document.querySelector('.reveal-img');
+            if (img && typeof getImageUrl === 'function') {
+                img.src = await getImageUrl(1);
+            }
+        });
+    </script>
+    <script src="script-scratch.js"></script>
+</body>
+</html>

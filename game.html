@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Game For You 🎈</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Outfit:wght@300;400;600;800&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style-game.css">
+</head>
+<body>
+    <a href="index.html" class="portal-home-link">Home</a>
+
+    <!-- Floating Background Bubbles -->
+    <div class="bubble-bg" id="bubbleBg"></div>
+
+    <!-- ===== SCREEN 1: THE QUIZ ===== -->
+    <section class="game-screen active" id="quizScreen">
+        <div class="glass-card quiz-card">
+            <div class="quiz-header">
+                <span class="quiz-badge">Level 1: Verification 🔒</span>
+                <h2>Kya Aap Sach Mein "Baneen" Hain? 🤔</h2>
+                <p>Is game ko khelne ke liye aapko 3 simple sawalon ke sahi jawab dene honge!</p>
+            </div>
+
+            <!-- Question 1 -->
+            <div class="question-container active" id="q1" data-step="1">
+                <div class="q-number">1 / 3</div>
+                <h3 class="q-text">Mera favorite name aapke liye kya hai? 🥰</h3>
+                <div class="options-grid">
+                    <button class="option-btn" onclick="checkAnswer(1, false, this)">Baneen Ji</button>
+                    <button class="option-btn" onclick="checkAnswer(1, true, this)">Jaan 💖</button>
+                    <button class="option-btn" onclick="checkAnswer(1, false, this)">Gudiya</button>
+                    <button class="option-btn" onclick="checkAnswer(1, false, this)">Oye</button>
+                </div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question-container" id="q2" data-step="2">
+                <div class="q-number">2 / 3</div>
+                <h3 class="q-text">Humare darmiyan ladaai hone par pehle sorry kaun bolta hai? 🤫</h3>
+                <div class="options-grid">
+                    <button class="option-btn" onclick="checkAnswer(2, false, this)">Aap (Baneen)</button>
+                    <button class="option-btn" onclick="checkAnswer(2, true, this)">Main (Aqeel) 🙋‍♂️</button>
+                    <button class="option-btn" onclick="checkAnswer(2, false, this)">Koi bhi nahi</button>
+                    <button class="option-btn" onclick="checkAnswer(2, false, this)">Ladaai hoti hi nahi</button>
+                </div>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question-container" id="q3" data-step="3">
+                <div class="q-number">3 / 3</div>
+                <h3 class="q-text">Mera sabse bada aur favorite tohfa kya hai? 🎁</h3>
+                <div class="options-grid">
+                    <button class="option-btn" onclick="checkAnswer(3, false, this)">Mera Phone</button>
+                    <button class="option-btn" onclick="checkAnswer(3, false, this)">Sari dunya ki khushi</button>
+                    <button class="option-btn" onclick="checkAnswer(3, true, this)">Aapka Saath aur Smile 🌻</button>
+                    <button class="option-btn" onclick="checkAnswer(3, false, this)">Kuch bhi nahi</button>
+                </div>
+            </div>
+
+            <div class="quiz-feedback" id="quizFeedback"></div>
+        </div>
+    </section>
+
+    <!-- ===== SCREEN 2: BALLOON POP ===== -->
+    <section class="game-screen" id="balloonScreen">
+        <div class="game-instructions">
+            <span class="instruction-badge">Level 2: Pop & Reveal 🎈</span>
+            <h2>Balloons ko Pop Karein!</h2>
+            <p>Balloons ko touch kar ke pop karein aur unke piche chupe messages ko parhein. Aakhri balloon mein kuch khaas hai!</p>
+            <div class="score-board">Popped: <span id="popCount">0</span> / 8</div>
+        </div>
+        
+        <!-- Balloon Container Area -->
+        <div class="balloon-container" id="balloonContainer"></div>
+    </section>
+
+    <!-- ===== SCREEN 3: FINAL SURPRISE ===== -->
+    <section class="game-screen" id="wishScreen">
+        <div class="wish-wrapper">
+            <div class="confetti-cannon">🎉</div>
+            <div class="glass-card wish-card animated-card">
+                <span class="card-sparkle">✨</span>
+                <h1 class="wish-title">Happy Birthday, Meri Jaan! 🎂</h1>
+                
+                <div class="wish-content-scroll">
+                    <p class="wish-para">
+                        Aapke is khaas din par main dil se dua karta hoon ke aap hamesha muskurati rahein. 
+                        Aapki smile meri zindagi ka sabse khoobsurat hissa hai. 
+                    </p>
+                    <p class="wish-para">
+                        Aap mere saath hain, toh har mushkil aasan lagti hai. Main aapse wada karta hoon 
+                        ke har lamha aapki khushi ke liye koshish karunga.
+                    </p>
+                    <p class="wish-para highlight-text">
+                        Aap mere liye bohot anmol hain. 💖
+                    </p>
+                    <p class="wish-urdu-text">
+                        جنم دن بہت بہت مبارک ہو، آپ میری زندگی کا سب سے خوبصورت تحفہ ہیں ♾️
+                    </p>
+                </div>
+
+                <div class="card-footer">
+                    <p class="signature">— Aqeel ki taraf se, hamesha ke liye aapka ❤️</p>
+                    <button class="replay-btn" onclick="restartGame()">Dobara Khelein 🔄</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Audio Settings -->
+    <div class="sound-control">
+        <button class="sound-btn" id="soundToggleBtn" onclick="toggleSound()">
+            🔊 Sound: On
+        </button>
+    </div>
+
+    <script src="script-game.js"></script>
+</body>
+</html>

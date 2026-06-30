@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard 🔐</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style-portal.css">
+</head>
+<body>
+    <div class="space-bg"></div>
+
+    <div class="portal-container">
+        <!-- Back to Portal Home -->
+        <a href="index.html" class="back-link">← Go to Portal Home</a>
+
+        <!-- ===== PASSCODE LOCK SCREEN ===== -->
+        <div class="glass-card auth-card" id="lockScreen">
+            <span class="lock-icon">🔐</span>
+            <h2>Enter Admin Passcode</h2>
+            <p>Isko access karne ke liye passcode enter karein.</p>
+            <div class="input-group">
+                <input type="password" id="passcodeInput" placeholder="••••••••" onkeydown="if(event.key === 'Enter') checkPasscode()">
+                <button class="action-btn" onclick="checkPasscode()">Unlock Dashboard</button>
+            </div>
+            <p class="error-msg" id="authError"></p>
+        </div>
+
+        <!-- ===== ADMIN DASHBOARD SCREEN ===== -->
+        <div class="admin-dashboard" id="dashboardScreen" style="display: none;">
+            <header class="portal-header">
+                <span class="portal-badge">Admin Panel ⚙️</span>
+                <h1>Upload Birthday Photos</h1>
+                <p>Website ke teeno sections ke liye yahan se images select karein. Uploaded photos auto-compress ho kar database/local mein save ho jayengi.</p>
+            </header>
+
+            <div class="upload-grid">
+                <!-- Photo 1 -->
+                <div class="glass-card upload-card">
+                    <span class="card-num">1</span>
+                    <h3>Photo 1: Jab Hum Mile</h3>
+                    <p>Timeline ki pehli photo</p>
+                    <div class="preview-box" id="preview-1">No Image</div>
+                    <label class="file-label">
+                        Choose Photo
+                        <input type="file" accept="image/*" onchange="handleImageUpload(1, this)">
+                    </label>
+                </div>
+
+                <!-- Photo 2 -->
+                <div class="glass-card upload-card">
+                    <span class="card-num">2</span>
+                    <h3>Photo 2: Pehli Baat</h3>
+                    <p>Timeline ki dusri photo ya chat screenshot</p>
+                    <div class="preview-box" id="preview-2">No Image</div>
+                    <label class="file-label">
+                        Choose Photo
+                        <input type="file" accept="image/*" onchange="handleImageUpload(2, this)">
+                    </label>
+                </div>
+
+                <!-- Photo 3 -->
+                <div class="glass-card upload-card">
+                    <span class="card-num">3</span>
+                    <h3>Photo 3: Special Moment</h3>
+                    <p>Timeline aur Scratch card 2 ki photo</p>
+                    <div class="preview-box" id="preview-3">No Image</div>
+                    <label class="file-label">
+                        Choose Photo
+                        <input type="file" accept="image/*" onchange="handleImageUpload(3, this)">
+                    </label>
+                </div>
+
+                <!-- Photo 4 -->
+                <div class="glass-card upload-card">
+                    <span class="card-num">4</span>
+                    <h3>Photo 4: Yaadgar Din</h3>
+                    <p>Timeline ki chothi photo</p>
+                    <div class="preview-box" id="preview-4">No Image</div>
+                    <label class="file-label">
+                        Choose Photo
+                        <input type="file" accept="image/*" onchange="handleImageUpload(4, this)">
+                    </label>
+                </div>
+
+                <!-- Photo 5 -->
+                <div class="glass-card upload-card">
+                    <span class="card-num">5</span>
+                    <h3>Photo 5: Funny Moment</h3>
+                    <p>Timeline ki panchwin photo</p>
+                    <div class="preview-box" id="preview-5">No Image</div>
+                    <label class="file-label">
+                        Choose Photo
+                        <input type="file" accept="image/*" onchange="handleImageUpload(5, this)">
+                    </label>
+                </div>
+
+                <!-- Photo 6 -->
+                <div class="glass-card upload-card">
+                    <span class="card-num">6</span>
+                    <h3>Photo 6: Latest / Wish Photo</h3>
+                    <p>Timeline ki aakhri/main photo</p>
+                    <div class="preview-box" id="preview-6">No Image</div>
+                    <label class="file-label">
+                        Choose Photo
+                        <input type="file" accept="image/*" onchange="handleImageUpload(6, this)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="dashboard-footer">
+                <button class="logout-btn" onclick="logout()">Lock Panel 🔒</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        // Check Login State
+        if (sessionStorage.getItem('admin_authorized') === 'true') {
+            showDashboard();
+        }
+
+        function checkPasscode() {
+            const input = document.getElementById('passcodeInput').value;
+            const error = document.getElementById('authError');
+            
+            if (input === CONFIG.ADMIN_PASSWORD) {
+                sessionStorage.setItem('admin_authorized', 'true');
+                showDashboard();
+            } else {
+                error.textContent = "Galat passcode! Dobara try karein. 😜";
+                playErrorSound();
+            }
+        }
+
+        function showDashboard() {
+            document.getElementById('lockScreen').style.display = 'none';
+            document.getElementById('dashboardScreen').style.display = 'block';
+            loadPreviews();
+        }
+
+        function logout() {
+            sessionStorage.removeItem('admin_authorized');
+            document.getElementById('lockScreen').style.display = 'block';
+            document.getElementById('dashboardScreen').style.display = 'none';
+            document.getElementById('passcodeInput').value = '';
+        }
+
+        // Load Previews
+        async function loadPreviews() {
+            for (let i = 1; i <= 6; i++) {
+                const url = await getImageUrl(i);
+                if (url && !url.startsWith('https://images.unsplash.com')) {
+                    const preview = document.getElementById(`preview-${i}`);
+                    preview.innerHTML = `<img src="${url}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">`;
+                }
+            }
+        }
+
+        // Handle Image Upload and Compress
+        function handleImageUpload(id, input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const preview = document.getElementById(`preview-${id}`);
+            preview.innerHTML = `<span class="loading-spinner">Compressing...</span>`;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const maxDim = 800; // Resize boundaries
+                    let w = img.width;
+                    let h = img.height;
+                    
+                    if (w > h) {
+                        if (w > maxDim) {
+                            h = Math.round(h * maxDim / w);
+                            w = maxDim;
+                        }
+                    } else {
+                        if (h > maxDim) {
+                            w = Math.round(w * maxDim / h);
+                            h = maxDim;
+                        }
+                    }
+
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+
+                    // Compress to JPEG with 0.7 quality factor
+                    const compressedUrl = canvas.toDataURL('image/jpeg', 0.7);
+
+                    // Save to Supabase/localStorage
+                    saveImageUrl(id, compressedUrl).then(() => {
+                        preview.innerHTML = `<img src="${compressedUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">`;
+                    });
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Quick buzzer sound for error
+        function playErrorSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, ctx.currentTime);
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.15);
+            } catch(e) {}
+        }
+    </script>
+</body>
+</html>

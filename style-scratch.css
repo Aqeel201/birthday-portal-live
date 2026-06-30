@@ -1,0 +1,384 @@
+/* ===== RESET & BASE STYLE ===== */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #ff477e;
+    --secondary: #7209b7;
+    --accent: #ffb703;
+    --bg-dark: #1b162e;
+    --bg-light: #2c224d;
+    --text-color: #ffffff;
+    --text-muted: #d0c2ee;
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --card-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    --font-display: 'Dancing Script', cursive;
+    --font-body: 'Outfit', sans-serif;
+    --font-urdu: 'Noto Nastaliq Urdu', serif;
+}
+
+body {
+    font-family: var(--font-body);
+    background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-light) 100%);
+    color: var(--text-color);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    padding: 2rem 1rem;
+}
+
+/* ===== STARS BACKGROUND ===== */
+.stars-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 71, 126, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(114, 9, 183, 0.08) 0%, transparent 40%);
+}
+
+.stars-bg::before {
+    content: '✨';
+    position: absolute;
+    top: 15%;
+    left: 10%;
+    font-size: 1.5rem;
+    opacity: 0.2;
+    animation: blink 3s infinite alternate;
+}
+
+.stars-bg::after {
+    content: '💫';
+    position: absolute;
+    bottom: 20%;
+    right: 15%;
+    font-size: 1.8rem;
+    opacity: 0.2;
+    animation: blink 4s infinite alternate-reverse;
+}
+
+@keyframes blink {
+    0% { opacity: 0.1; transform: scale(0.9); }
+    100% { opacity: 0.4; transform: scale(1.1); }
+}
+
+/* ===== CONTAINER ===== */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    background: rgba(255, 71, 126, 0.15);
+    border: 1px solid rgba(255, 71, 126, 0.3);
+    border-radius: 50px;
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.header h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-family: var(--font-display);
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+    font-weight: 800;
+}
+
+.header p {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* ===== SCRATCH CARD GRID ===== */
+.scratch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.scratch-card-wrapper {
+    perspective: 1000px;
+    height: 380px;
+}
+
+.scratch-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease;
+}
+
+.scratch-card-wrapper:hover .scratch-card-inner {
+    transform: translateY(-8px);
+    border-color: rgba(255, 71, 126, 0.3);
+    box-shadow: 0 20px 45px rgba(255, 71, 126, 0.15);
+}
+
+/* Underneath Content Layer */
+.scratch-content {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(44, 34, 77, 0.9) 0%, rgba(27, 22, 46, 0.95) 100%);
+    border-radius: 24px;
+    text-align: center;
+    overflow: hidden;
+}
+
+.card-emoji {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    animation: float 3s ease-in-out infinite alternate;
+}
+
+@keyframes float {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-8px); }
+}
+
+.scratch-content h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    color: var(--accent);
+}
+
+.scratch-content p {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text-muted);
+}
+
+.urdu-text {
+    font-family: var(--font-urdu);
+    direction: rtl;
+    font-size: 1.15rem !important;
+    color: var(--primary-light) !important;
+    line-height: 1.8 !important;
+    margin-bottom: 0.8rem;
+}
+
+/* Image reveal content */
+.scratch-content.image-content {
+    padding: 0;
+    justify-content: flex-end;
+}
+
+.reveal-img {
+    width: 100%;
+    height: 80%;
+    object-fit: cover;
+    border-radius: 24px 24px 0 0;
+}
+
+.img-placeholder {
+    width: 100%;
+    height: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.05);
+    border-bottom: 1px dashed var(--glass-border);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    padding: 1.5rem;
+}
+
+.caption {
+    width: 100%;
+    height: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--primary-light);
+    background: rgba(0, 0, 0, 0.3);
+}
+
+/* Special Main Wish Content */
+.main-wish-content {
+    background: linear-gradient(135deg, rgba(114, 9, 183, 0.4) 0%, rgba(255, 71, 126, 0.15) 100%);
+    border: 1px solid rgba(255, 71, 126, 0.2);
+}
+
+.main-wish-content .main-title {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    color: #ffd166;
+    margin-bottom: 0.5rem;
+}
+
+.main-wish-content .main-para {
+    font-size: 0.95rem;
+    color: white;
+    margin-bottom: 0.8rem;
+}
+
+.main-wish-content .signature {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--primary);
+    margin-top: 0.8rem;
+}
+
+/* Front Cover Canvas */
+.scratch-canvas {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    cursor: crosshair;
+    width: 100%;
+    height: 100%;
+    border-radius: 24px;
+    touch-action: none;
+    transition: opacity 0.5s ease;
+}
+
+.scratch-canvas.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ===== FOOTER & RESET BUTTON ===== */
+.footer {
+    text-align: center;
+    margin-top: 3rem;
+    margin-bottom: 2rem;
+}
+
+.reset-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--glass-border);
+    color: var(--text-color);
+    padding: 0.8rem 2.2rem;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.reset-btn:hover {
+    background: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 8px 25px rgba(255, 71, 126, 0.3);
+    transform: translateY(-2px);
+}
+
+/* ===== SOUND CONTROL ===== */
+.portal-home-link {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 100;
+    color: var(--text-color);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    padding: 0.5rem 0.9rem;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 700;
+    backdrop-filter: blur(10px);
+}
+
+.sound-control {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 100;
+}
+
+.sound-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: var(--text-color);
+    padding: 0.5rem 1.2rem;
+    border-radius: 50px;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.sound-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* ===== CONFETTI SPARKLE ===== */
+.confetti-piece {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    z-index: 9999;
+    pointer-events: none;
+    animation: confettiFall linear forwards;
+}
+
+@keyframes confettiFall {
+    0% { transform: translateY(-5vh) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    body {
+        padding: 4rem 0.85rem 1.25rem;
+    }
+
+    .scratch-grid {
+        grid-template-columns: 1fr;
+        max-width: 450px;
+        margin: 0 auto 3rem;
+    }
+
+    .scratch-card-inner {
+        min-height: 320px;
+    }
+
+    .sound-btn,
+    .portal-home-link {
+        font-size: 0.72rem;
+        padding: 0.45rem 0.7rem;
+    }
+}
