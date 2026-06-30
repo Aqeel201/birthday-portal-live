@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secret Letter for Baneen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style-portal.css">
+</head>
+<body class="surprise-body">
+    <div class="space-bg"></div>
+    <div class="portal-container surprise-container">
+        <a href="index.html" class="back-link">← Portal Home</a>
+
+        <section class="surprise-hero">
+            <span class="portal-badge">Private Note</span>
+            <h1 class="portal-title">A Letter For You</h1>
+            <p class="portal-tagline">Sirf Baneen Jan ke liye.</p>
+        </section>
+
+        <section class="letter-stage">
+            <button class="envelope" id="openLetterBtn" type="button" aria-label="Open secret letter">
+                <span class="envelope-flap"></span>
+                <span class="envelope-heart">💖</span>
+                <span class="envelope-label">Tap to open</span>
+            </button>
+
+            <article class="glass-card letter-card" id="letterCard" aria-live="polite">
+                <p class="letter-eyebrow">Meri Baneen Jan,</p>
+                <h2>Happy Birthday, meri sab se pyari muskurahat.</h2>
+                <p>
+                    Aap meri zindagi ka woh hissa hain jahan har cheez thori zyada roshan lagti hai.
+                    Main chahta hoon ke aaj ka din aapko utna hi special feel karaye jitni special aap mere liye hain.
+                </p>
+                <p>
+                    Aapki smile, aapki baatein, aur aapka saath mere liye sab se khoobsurat gift hai.
+                    Allah kare aap hamesha khush rahen, hamesha safe rahen, aur har dua aapke haq mein qabool ho.
+                </p>
+                <p class="letter-signature">- Hamesha aapka, Aqeel</p>
+            </article>
+        </section>
+    </div>
+
+    <script>
+        const button = document.getElementById('openLetterBtn');
+        const card = document.getElementById('letterCard');
+        button.addEventListener('click', () => {
+            button.classList.add('is-open');
+            card.classList.add('is-visible');
+            setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'center' }), 250);
+        });
+    </script>
+    <script src="music-player.js"></script>
+</body>
+</html>

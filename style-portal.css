@@ -486,6 +486,282 @@ body {
     box-shadow: 0 5px 15px rgba(239, 71, 111, 0.4);
 }
 
+/* ===== EXTRA SURPRISE PAGES ===== */
+.surprise-body {
+    min-height: 100vh;
+}
+
+.surprise-container {
+    max-width: 960px;
+}
+
+.surprise-hero {
+    text-align: center;
+    margin: 1rem auto 2.5rem;
+}
+
+.letter-stage,
+.jar-layout {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.9fr) minmax(300px, 1.1fr);
+    align-items: center;
+    gap: 2rem;
+}
+
+.envelope {
+    width: min(100%, 360px);
+    min-height: 230px;
+    margin: 0 auto;
+    border: 0;
+    border-radius: 26px;
+    background: linear-gradient(150deg, #ff477e 0%, #ff85a8 52%, #ffb703 100%);
+    box-shadow: 0 22px 55px rgba(0, 0, 0, 0.34);
+    color: white;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transform-style: preserve-3d;
+}
+
+.envelope::before,
+.envelope::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 62%;
+    background: rgba(255,255,255,0.18);
+    clip-path: polygon(0 100%, 50% 35%, 100% 100%);
+}
+
+.envelope-flap {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 58%;
+    background: rgba(255,255,255,0.24);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: top;
+    transition: transform 0.7s ease;
+}
+
+.envelope-heart {
+    position: relative;
+    display: block;
+    z-index: 2;
+    font-size: 4rem;
+    margin-top: 4.3rem;
+    transition: transform 0.4s ease;
+}
+
+.envelope-label {
+    position: relative;
+    z-index: 2;
+    display: block;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.envelope.is-open .envelope-flap {
+    transform: rotateX(180deg);
+}
+
+.envelope.is-open .envelope-heart {
+    transform: translateY(-12px) scale(1.18);
+}
+
+.letter-card {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.letter-card.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.letter-eyebrow {
+    color: var(--accent);
+    font-weight: 800;
+    margin-bottom: 0.8rem;
+}
+
+.letter-card h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin-bottom: 1rem;
+}
+
+.letter-card p {
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+}
+
+.letter-signature {
+    color: white !important;
+    font-weight: 800;
+    margin-top: 1.5rem;
+}
+
+.love-jar {
+    width: min(100%, 320px);
+    margin: 0 auto;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    color: white;
+    display: grid;
+    justify-items: center;
+    gap: 0.8rem;
+}
+
+.jar-lid {
+    width: 150px;
+    height: 34px;
+    border-radius: 18px 18px 8px 8px;
+    background: linear-gradient(135deg, #ffb703, #fff0a8);
+    box-shadow: var(--shadow);
+}
+
+.jar-glass {
+    width: 230px;
+    height: 260px;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-radius: 34px 34px 56px 56px;
+    background: linear-gradient(160deg, rgba(255,255,255,0.18), rgba(255,255,255,0.05));
+    box-shadow: inset 0 0 35px rgba(255,255,255,0.12), var(--shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+.jar-heart {
+    position: absolute;
+    font-size: 2.1rem;
+    animation: floatHeart 3s ease-in-out infinite alternate;
+}
+
+.jar-heart-1 { left: 38px; bottom: 44px; }
+.jar-heart-2 { right: 42px; bottom: 74px; animation-delay: 0.4s; }
+.jar-heart-3 { left: 82px; top: 74px; animation-delay: 0.8s; }
+.jar-heart-4 { right: 70px; top: 118px; animation-delay: 1.2s; }
+
+@keyframes floatHeart {
+    from { transform: translateY(0) rotate(-5deg); }
+    to { transform: translateY(-16px) rotate(8deg); }
+}
+
+.jar-label {
+    padding: 0.6rem 1.2rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid var(--glass-border);
+    font-weight: 800;
+}
+
+.love-jar.shake {
+    animation: jarShake 0.55s ease;
+}
+
+@keyframes jarShake {
+    20% { transform: rotate(-3deg); }
+    40% { transform: rotate(3deg); }
+    60% { transform: rotate(-2deg); }
+    80% { transform: rotate(2deg); }
+}
+
+.reason-display {
+    min-height: 260px;
+    display: grid;
+    align-content: center;
+    gap: 1.2rem;
+    text-align: center;
+}
+
+.reason-count {
+    justify-self: center;
+    color: var(--accent);
+    font-weight: 800;
+    font-size: 0.86rem;
+}
+
+.reason-display p,
+.finale-message {
+    font-size: clamp(1.25rem, 3vw, 1.9rem);
+    line-height: 1.55;
+    font-weight: 800;
+}
+
+.reason-btn {
+    justify-self: center;
+    min-width: 150px;
+}
+
+.pop-in {
+    animation: popIn 0.38s ease;
+}
+
+@keyframes popIn {
+    from { opacity: 0; transform: translateY(12px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.fireworks-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.finale-container {
+    position: relative;
+    z-index: 2;
+}
+
+.finale-panel {
+    min-height: calc(100vh - 4rem);
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    text-align: center;
+    gap: 1.4rem;
+}
+
+.wish-stars {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8rem;
+}
+
+.wish-stars button {
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 999px;
+    padding: 0.75rem 1.2rem;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    font-family: var(--font-body);
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.wish-stars button:hover {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.18);
+}
+
+.finale-message {
+    width: min(100%, 680px);
+    min-height: 120px;
+    display: grid;
+    place-items: center;
+}
+
+.finale-btn {
+    min-width: 170px;
+}
+
 /* ===== RESPONSIVE PORTAL ===== */
 @media (max-width: 600px) {
     body {
@@ -538,6 +814,37 @@ body {
     .secret-admin-btn {
         right: 1rem;
         bottom: 1rem;
+    }
+
+    .letter-stage,
+    .jar-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .surprise-hero {
+        margin-bottom: 1.6rem;
+    }
+
+    .envelope {
+        min-height: 205px;
+    }
+
+    .jar-glass {
+        width: 205px;
+        height: 235px;
+    }
+
+    .reason-display {
+        min-height: 220px;
+    }
+
+    .finale-panel {
+        min-height: calc(100vh - 2.5rem);
+        padding-bottom: 4rem;
+    }
+
+    .wish-stars button {
+        padding: 0.65rem 1rem;
     }
 }
 

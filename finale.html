@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Surprise for Baneen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style-portal.css">
+</head>
+<body class="surprise-body finale-body">
+    <canvas class="fireworks-canvas" id="fireworksCanvas"></canvas>
+    <div class="space-bg"></div>
+
+    <div class="portal-container surprise-container finale-container">
+        <a href="index.html" class="back-link">← Portal Home</a>
+
+        <section class="finale-panel">
+            <span class="portal-badge">Final Wish</span>
+            <h1 class="portal-title">Happy Birthday Baneen Jan</h1>
+            <p class="portal-tagline">Aap hamesha muskuraati rahen. Aaj ka din sirf aapka hai.</p>
+
+            <div class="wish-stars">
+                <button type="button" data-message="Allah kare aapki har dua qabool ho.">Dua</button>
+                <button type="button" data-message="Aapki smile hamesha meri favorite rahegi.">Smile</button>
+                <button type="button" data-message="Main hamesha aapki khushi ke liye koshish karunga.">Promise</button>
+            </div>
+
+            <div class="glass-card finale-message" id="finaleMessage">
+                Aik star choose karein, meri jaan.
+            </div>
+
+            <button class="action-btn finale-btn" id="finaleBtn" type="button">Launch Hearts</button>
+        </section>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('fireworksCanvas');
+        const ctx = canvas.getContext('2d');
+        const finaleMessage = document.getElementById('finaleMessage');
+        const finaleBtn = document.getElementById('finaleBtn');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function launch(x = canvas.width / 2, y = canvas.height * 0.45) {
+            const colors = ['#ff477e', '#ffb703', '#4cc9f0', '#ffffff', '#b5179e'];
+            for (let i = 0; i < 70; i++) {
+                const angle = (Math.PI * 2 * i) / 70;
+                const speed = 1.5 + Math.random() * 4;
+                particles.push({
+                    x,
+                    y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    life: 70 + Math.random() * 30,
+                    color: colors[Math.floor(Math.random() * colors.length)]
+                });
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles = particles.filter((particle) => particle.life > 0);
+            particles.forEach((particle) => {
+                particle.x += particle.vx;
+                particle.y += particle.vy;
+                particle.vy += 0.025;
+                particle.life -= 1;
+                ctx.globalAlpha = Math.max(particle.life / 90, 0);
+                ctx.fillStyle = particle.color;
+                ctx.beginPath();
+                ctx.arc(particle.x, particle.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.globalAlpha = 1;
+            requestAnimationFrame(animate);
+        }
+
+        document.querySelectorAll('.wish-stars button').forEach((button) => {
+            button.addEventListener('click', () => {
+                finaleMessage.textContent = button.dataset.message;
+                finaleMessage.classList.remove('pop-in');
+                void finaleMessage.offsetWidth;
+                finaleMessage.classList.add('pop-in');
+                launch();
+            });
+        });
+
+        finaleBtn.addEventListener('click', () => {
+            finaleMessage.textContent = 'Happy Birthday, Baneen Jan. You are deeply loved.';
+            for (let i = 0; i < 4; i++) {
+                setTimeout(() => launch(Math.random() * canvas.width, 120 + Math.random() * canvas.height * 0.5), i * 250);
+            }
+        });
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        animate();
+        setTimeout(() => launch(), 600);
+    </script>
+    <script src="music-player.js"></script>
+</body>
+</html>

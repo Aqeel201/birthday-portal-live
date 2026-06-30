@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reasons Jar for Baneen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style-portal.css">
+</head>
+<body class="surprise-body">
+    <div class="space-bg"></div>
+    <div class="portal-container surprise-container">
+        <a href="index.html" class="back-link">← Portal Home</a>
+
+        <section class="surprise-hero">
+            <span class="portal-badge">Little Reasons</span>
+            <h1 class="portal-title">Reasons Jar</h1>
+            <p class="portal-tagline">Har tap par ek choti si wajah.</p>
+        </section>
+
+        <section class="jar-layout">
+            <button class="love-jar" id="jarBtn" type="button" aria-label="Pick a reason">
+                <span class="jar-lid"></span>
+                <span class="jar-glass">
+                    <span class="jar-heart jar-heart-1">💗</span>
+                    <span class="jar-heart jar-heart-2">💛</span>
+                    <span class="jar-heart jar-heart-3">💜</span>
+                    <span class="jar-heart jar-heart-4">💖</span>
+                </span>
+                <span class="jar-label">Pick a reason</span>
+            </button>
+
+            <div class="glass-card reason-display">
+                <span class="reason-count" id="reasonCount">0 / 12</span>
+                <p id="reasonText">Jar ko tap karein, Baneen Jan.</p>
+                <button class="action-btn reason-btn" id="nextReasonBtn" type="button">Next Reason</button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const reasons = [
+            'Aapki smile mere din ka sab se pyara hissa hai.',
+            'Aap se baat karun to dil ko sukoon milta hai.',
+            'Aap naraz bhi hoti hain to cute lagti hain.',
+            'Aapki care mujhe har mushkil mein strong banati hai.',
+            'Aap meri favorite notification hain.',
+            'Aapke saath simple lamhe bhi yaadgar ban jate hain.',
+            'Aapki awaaz mere liye comfort hai.',
+            'Aap meri duaon ka sab se khoobsurat jawab hain.',
+            'Aap meri life mein khushi ka soft corner hain.',
+            'Aap ho to future zyada pyara lagta hai.',
+            'Aapka naam sun ke smile khud aa jati hai.',
+            'Meri duniya mein aap jaisi koi nahi.'
+        ];
+        let index = -1;
+        const jarBtn = document.getElementById('jarBtn');
+        const nextReasonBtn = document.getElementById('nextReasonBtn');
+        const text = document.getElementById('reasonText');
+        const count = document.getElementById('reasonCount');
+
+        function pickReason() {
+            index = (index + 1) % reasons.length;
+            text.classList.remove('pop-in');
+            void text.offsetWidth;
+            text.textContent = reasons[index];
+            text.classList.add('pop-in');
+            count.textContent = `${index + 1} / ${reasons.length}`;
+            jarBtn.classList.remove('shake');
+            void jarBtn.offsetWidth;
+            jarBtn.classList.add('shake');
+        }
+
+        jarBtn.addEventListener('click', pickReason);
+        nextReasonBtn.addEventListener('click', pickReason);
+    </script>
+    <script src="music-player.js"></script>
+</body>
+</html>
